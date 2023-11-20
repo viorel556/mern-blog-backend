@@ -6,12 +6,12 @@ import {registerValidator} from './validators/auth.js';
 import {validationResult} from "express-validator";
 import UserModel from './models/User.js';
 
+// DATABASE SETUP:
 // database details:
-const dbname = "my_first_database";
+const dbname = "blog";
 const user = 'viorel556';
 const password = 'standart1';
 const cluster = 'cluster0';
-
 // Connecting to mongoDB by using Mongoose:
 mongoose
     .connect(`mongodb+srv://${user}:${password}@${cluster}.xx2rtno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
@@ -21,7 +21,6 @@ mongoose
 
 // CREATING an app, aka server;
 const app = express();
-
 app.use(express.json()); // SET-UP: indicating that our app can READ now json files;
 
 app.get('/', (req, res) => {
@@ -55,29 +54,54 @@ app.post('/auth/login', (req, res) => {
 });
 
 app.post('/auth/register', registerValidator, async (req, res) => {
-    const errors = validationResult(req);
+    try {
+        // trying validation:
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors.array());
+        }
 
-    if (!errors.isEmpty()) {
-        return res.status(400).json(errors.array());
+        // HASHING the password:
+        const password = req.body.password;
+        const salt = await bcrypt.genSalt(10); // salt - is the encryption algorithm;
+        const hash = await bcrypt.hash(password, salt);
+
+        // MAPPING the received data:
+        const doc = new UserModel(
+            {
+                email: req.body.email,
+                fullName: req.body.fullName,
+                avatarUrl: req.body.avatarUrl,
+                passwordHash: hash // we'll save here the password hash;
+            }
+        );
+        const user = await doc.save()
+
+        const token = jwt.sign(
+            {_id: user._id },
+            'secret123',
+            { expiresIn: '30d'}
+        );
+
+        const {passwordHash, ...userData} = user._doc;
+
+        res.json(
+            {
+                ...userData,
+                token
+            }
+        ); // in Express there should be only ONE answer ALWAYS;
     }
 
-    const password = req.body.password;
-    const salt = await bcrypt.genSalt(10); // salt - is the encryption algorithm;
-    const passwordHash = await bcrypt.hash(password, salt )
+    catch (err){
+        console.log(err); // printing error just for the Devs;
 
-    const doc = new UserModel(
-        {
-            email: req.body.email,
-            fullName: req.body.fullName,
-            avatarUrl: req.body.avatarUrl,
-            password: req.body.password,
-        }
-    );
-
-    res.json(
-        // returns a JSON that tells us info about validation; if all good returns "success: true"
-        { success: true }
-    )
+        res.status(500).json(
+            {
+                message: "Registration not possible. Some error has occurred!"
+            }
+        );
+    }
 
 });
 

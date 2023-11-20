@@ -1,3 +1,4 @@
 # my-blog
-FullStack Blog Website 
+A full-stack web blog application using Express, MongoDB, React; 
+
 
