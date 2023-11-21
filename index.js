@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import {registerValidator} from './validators/auth.js';
 import {validationResult} from "express-validator";
 import UserModel from './models/User.js';
-
+import checkAuth from "./utils/checkAuth.js";
 // DATABASE SETUP:
 // database details:
 const dbname = "blog";
@@ -21,6 +21,7 @@ mongoose
 
 // CREATING an app, aka server;
 const app = express();
+
 app.use(express.json()); // SET-UP: indicating that our app can READ now json files;
 
 app.get('/', (req, res) => {
@@ -28,28 +29,61 @@ app.get('/', (req, res) => {
     res.send("HELLO WORLD,. this is some new shit!");
 });
 
-app.post('/auth/login', (req, res) => {
+app.post('/auth/login', async (req, res) => {
 
-    // if (req.body === 'test@test.ru') {
-    //     const token = jwt.sign(
-    //         {
-    //             email: req.body.email,
-    //             fullName: "Vasia Pupkin",
-    //         },
-    //         'secret123'
-    //     );
-    // }
-    //
+    try {
+        // CHECKING if a user exists:
+        const user = await UserModel.findOne( { email: req.body.email });
+        if(!user) {
+            return res.status(404).json({//obj
+                message:'User not found!'
+            });
+        }
 
+        // COMPARING the password with the stored hash via bcrypt:
+        const isValidPass = await bcrypt.compare(
+            req.body.password,   user._doc.passwordHash
+        )
+        if (!isValidPass) {
+            return req.status(400).json({
+                message:'Login or password is incorrect!'
+            });
+        }
 
+        // HAPPY PATH: if all the above are ok, new token IS CREATED;
+        const token = jwt.sign(
+            {_id: user._id },
+            'secret123',
+            { expiresIn: '30d'}
+        );
+        const {passwordHash, ...userData} = user._doc;
+        res.json(
+            {
+                loggedIn: true,
+                ...userData, // we don't want to return the password hash to the user hence line 58;
+                token
+            }
+        );
 
-    // RECEIVES a post request and RETURNS a JSON file:
-    res.json(
-        {
-            success: true,
-            token
-        },
-    );
+    }
+
+    catch (err) {
+        // UNHAPPY PATH:
+        console.log(err); // printing error just for the Devs;
+        res.status(500).json(
+            {
+                message: "Login not possible. Some error has occurred!"
+            }
+        );
+    }
+
+    // // RECEIVES a post request and RETURNS a JSON file:
+    // res.json(
+    //     {
+    //         success: true,
+    //         token
+    //     },
+    // );
 
 });
 
@@ -84,7 +118,8 @@ app.post('/auth/register', registerValidator, async (req, res) => {
         );
 
         const {passwordHash, ...userData} = user._doc;
-
+        // context: destructuring user._doc in 2 entities, passwordHash and userData for rest of data
+        // passing just userData as response;
         res.json(
             {
                 ...userData,
@@ -105,6 +140,29 @@ app.post('/auth/register', registerValidator, async (req, res) => {
 
 });
 
+
+app.get('/auth/me', checkAuth, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId)
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'No such user found!'
+            });
+        }
+
+        const {passwordHash, ...userData} = user._doc;
+        res.json(userData);
+    }
+
+    catch (err) {
+        console.log(err);
+
+        res.status(500).json({
+            message:'No access!'
+        });
+    }
+});
 
 app.listen(4444, (err) => {
     if (err) {
