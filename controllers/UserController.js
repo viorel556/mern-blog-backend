@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 export const register = async(req, res) => {
 
     try {
-
         // HASHING the password:
         const password = req.body.password;
         const salt = await bcrypt.genSalt(10); // salt - is the encryption algorithm;

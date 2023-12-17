@@ -1,6 +1,5 @@
 import PostModel from '../models/Post.js'
 
-
 export const create = async (req, res) => {
     try {
         const doc = new PostModel(
@@ -9,7 +8,6 @@ export const create = async (req, res) => {
                 text: req.body.text,
                 tags: req.body.tags,
                 imageUrl: req.body.imageUrl,
-
                 // viewsCount: req.body.viewsCount,
                 user: req.userId,
             }
@@ -25,8 +23,6 @@ export const create = async (req, res) => {
             message: "Was not able to create a post!"
         });
     }
-
-
 }
 
 export const getAll = async (req, res) => {
@@ -94,7 +90,7 @@ export const remove = async (req, res) => {
         }
 
         res.json({
-            'message': "POST: "+ postId + " successfully deleted"
+            'message': "POST: " + postId + " successfully deleted"
         });
 
     } catch (err) {
@@ -134,11 +130,27 @@ export const update = async (req, res) => {
 
         res.json({'success': true});
 
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             message: "Was not able to EDIT this post!"
+        });
+    }
+}
+
+export const getLastTags = async (req, res) => {
+    try {
+        const posts = await PostModel.find().limit(5).exec();
+
+        const tags = posts
+            .map(obj => obj.tags)
+            .flat().slice(0, 5);
+
+        res.json(tags);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            message: "Was not able to return tags!"
         });
     }
 }
