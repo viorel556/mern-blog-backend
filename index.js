@@ -17,7 +17,7 @@ const cluster = 'cluster0';
 // Connecting to MongoDB by using Mongoose:
 mongoose
     .connect(`mongodb+srv://${user}:${password}@${cluster}.xx2rtno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
-    .then(() => console.log('DB is OK. '))
+    .then(() => console.log('DB is OK! '))
     .catch((err) => console.log('DB ERROR: ', err))
 
 // CREATING an app, aka server:

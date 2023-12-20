@@ -14,13 +14,13 @@ export const register = async(req, res) => {
         // MAPPING the received data:
         const doc = new UserModel(
             {
-                email: req.body.email,
                 fullName: req.body.fullName,
+                email: req.body.email,
+                passwordHash: hash, // we'll save here the password hash;
                 avatarUrl: req.body.avatarUrl,
-                passwordHash: hash // we'll save here the password hash;
             }
         );
-        const user = await doc.save()
+        const user = await doc.save();
 
         const token = jwt.sign(
             {_id: user._id},
@@ -34,7 +34,7 @@ export const register = async(req, res) => {
         res.json(
             {
                 ...userData,
-                token
+                payload: token
             }
         ); // in Express there should be only ONE answer ALWAYS;
     }
@@ -43,7 +43,7 @@ export const register = async(req, res) => {
 
         res.status(500).json(
             {
-                message: "Registration not possible. Some error has occurred!"
+                message: "SERVER: Registration not possible. Some error has occurred!"
             }
         );
     }
@@ -77,6 +77,7 @@ export const login = async (req, res) => {
             { expiresIn: '30d'}
         );
         const {passwordHash, ...userData} = user._doc;
+
         res.json(
             {
                 loggedIn: true,

@@ -52,7 +52,7 @@ export const getPost = async (req, res) => {
             {
                 returnDocument: 'after' // return the UPDATED document
             },
-        );
+        ).populate('user');
 
         if (!doc) {
             return res.status(404).json({
@@ -60,7 +60,7 @@ export const getPost = async (req, res) => {
             });
         }
 
-        res.json(doc)
+        res.json(doc);
 
     } catch (err) {
         console.log(err);
