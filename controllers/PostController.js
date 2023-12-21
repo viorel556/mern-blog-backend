@@ -15,10 +15,9 @@ export const create = async (req, res) => {
 
         const post = await doc.save();
 
-        // HAPPY PATH: returning the post doc that was created in DB
+        // HAPPY PATH: returning the post doc that was created in DB;
         res.json(post);
     } catch (err) {
-        console.log(err);
         res.status(500).json({
             message: "Was not able to create a post!"
         });

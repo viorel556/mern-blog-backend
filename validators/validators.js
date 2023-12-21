@@ -15,6 +15,6 @@ export const loginValidator = [
 export const postCreateValidator = [
     body('title', 'Enter title pls').isLength({min: 3}).isString(),
     body('text', 'Enter proper post text pls').isLength({min: 10}).isString(),
-    body('tags', 'incorrect format of tags (indicate an array)!').optional().isString(),
+    body('tags', 'incorrect format of tags (indicate an array)!').optional().isArray(),
     body('imageUrl', 'Incorrect link for image!').optional().isString()
 ]

@@ -20,6 +20,7 @@ export const register = async(req, res) => {
                 avatarUrl: req.body.avatarUrl,
             }
         );
+
         const user = await doc.save();
 
         const token = jwt.sign(
