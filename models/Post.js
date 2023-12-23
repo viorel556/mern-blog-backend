@@ -29,6 +29,14 @@ const PostSchema = new mongoose.Schema(
             required: true,
         },
 
+        // creating a comments section for an post:
+        // comments: [
+        //     {
+        //         ref: 'User',
+        //         comment: String
+        //     }
+        // ],
+
         imageUrl: String
     },
 

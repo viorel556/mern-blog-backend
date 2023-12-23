@@ -70,10 +70,11 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
         url: `/uploads/${req.file.originalname}`
     });
 });
+// app.post('/posts/:id', checkAuth, PostController.postComment);
 
 app.listen(4444, (err) => {
-    if (err) {
-        return console.log(err);
-    }
+
+    if (err) { return console.log(err); }
+
     console.log("SERVER OK! (was launched)");
 });

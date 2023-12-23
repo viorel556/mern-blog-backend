@@ -6,6 +6,5 @@ export default (req, res, next) => { // MIDDLEWARE:
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.array());
     }
-
     next();
 }
