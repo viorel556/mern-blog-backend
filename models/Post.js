@@ -29,13 +29,14 @@ const PostSchema = new mongoose.Schema(
             required: true,
         },
 
-        // creating a comments section for an post:
-        // comments: [
-        //     {
-        //         ref: 'User',
-        //         comment: String
-        //     }
-        // ],
+        // creating a comments section for a post:
+        comments: [
+            {
+                commentAuthor: String,
+                comment: String,
+                default: []
+            }
+        ],
 
         imageUrl: String
     },

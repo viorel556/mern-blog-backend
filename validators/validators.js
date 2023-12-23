@@ -18,3 +18,7 @@ export const postCreateValidator = [
     body('tags', 'incorrect format of tags (indicate an array)!').optional().isArray(),
     body('imageUrl', 'Incorrect link for image!').optional().isString()
 ]
+
+export const commentCreateValidator = [
+    // I don't know how the fuck to do it YET;
+]

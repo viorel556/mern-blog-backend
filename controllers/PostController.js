@@ -154,28 +154,35 @@ export const getLastTags = async (req, res) => {
     }
 }
 
-// export const postComment = async (req, res) => {
-//     try {
-//         const postId = req.params.id;
-//
-//         const doc = await PostModel.findOneAndUpdate(
-//             {
-//                 _id: postId // find an element by ID;
-//             },
-//             {   // HERE we indicated WHAT we're trying to update:
-//                 comments: {
-//                     user: req.body.userId,
-//                     comment: req.body.comment
-//                 }
-//             },
-//         );
-//
-//         res.json({'success': true});
-//
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).json({
-//             message: "Was not able to EDIT this post!"
-//         });
-//     }
-// }
+export const addComment= async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        const doc = await PostModel.findOneAndUpdate(
+            {
+                _id: postId // find an element by ID;
+            },
+            {   // HERE we indicated WHAT we're trying to update:
+                comments: req.body.comments
+            },
+
+            {
+                returnDocument: 'after' // return the UPDATED document;
+            }
+        );
+
+        if (!doc) {
+            res.status(404).json({
+                message: "No such post found for adding the comment!"
+            });
+        }
+
+        res.json({'success': true});
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: "Was not able to EDIT this post!"
+        });
+    }
+}
