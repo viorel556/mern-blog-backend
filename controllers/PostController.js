@@ -163,7 +163,10 @@ export const addComment= async (req, res) => {
                 _id: postId // find an element by ID;
             },
             {   // HERE we indicated WHAT we're trying to update:
-                comments: req.body.comments
+                comments: req.body.comments,
+                fullName: req.body.comments.fullName,
+                avatarUrl: req.body.comments.avatarUrl,
+                text: req.body.text
             },
 
             {

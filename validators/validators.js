@@ -19,6 +19,7 @@ export const postCreateValidator = [
     body('imageUrl', 'Incorrect link for image!').optional().isString()
 ]
 
-export const commentCreateValidator = [
-    // I don't know how the fuck to do it YET;
-]
+// export const commentCreateValidator = [
+//     body('user', 'Enter user pls').isLength({min: 3}).isString(),
+//     body('text', 'Enter proper comment text pls').isLength({min: 3}).isString(),
+// ]
