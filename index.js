@@ -12,15 +12,9 @@ import multer from 'multer';
 import handleValidationErrors from "./utils/handleValidationErrors.js";
 
  // DATABASE SETUP:
-// database details:
-const dbname = "blog";
-const user = 'viorel556';
-const password = 'standart1';
-const cluster = 'cluster0';
-
 // Connecting to MongoDB by using Mongoose:
 mongoose
-    .connect(`mongodb+srv://${user}:${password}@${cluster}.xx2rtno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+    .connect(process.end.MONGODB_URI) // IMPORTANT: HEROKU deploys our user credentials for access;
     .then(() => console.log('DB is OK! '))
     .catch((err) => console.log('DB ERROR: ', err))
 
@@ -78,7 +72,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 // adding a comment (updating the post);
 app.patch('/posts/:id/comments', checkAuth,  handleValidationErrors, PostController.addComment);
 
-app.listen(4444, (err) => {
+app.listen(process.end.PORT || 4444, (err) => {
     if (err) { return console.log(err); }
     console.log("SERVER OK! (was launched)");
 });
