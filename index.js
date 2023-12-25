@@ -14,7 +14,7 @@ import handleValidationErrors from "./utils/handleValidationErrors.js";
  // DATABASE SETUP:
 // Connecting to MongoDB by using Mongoose:
 mongoose
-    .connect(process.end.MONGODB_URI) // IMPORTANT: HEROKU deploys our user credentials for access;
+    .connect(process.env.MONGODB_URI) // IMPORTANT: HEROKU deploys our user credentials for access;
     .then(() => console.log('DB is OK! '))
     .catch((err) => console.log('DB ERROR: ', err))
 
@@ -72,7 +72,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 // adding a comment (updating the post);
 app.patch('/posts/:id/comments', checkAuth,  handleValidationErrors, PostController.addComment);
 
-app.listen(process.end.PORT || 4444, (err) => {
+app.listen(process.env.PORT || 4444, (err) => {
     if (err) { return console.log(err); }
     console.log("SERVER OK! (was launched)");
 });
