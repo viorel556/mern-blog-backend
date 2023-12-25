@@ -35,7 +35,7 @@ export const register = async(req, res) => {
         res.json(
             {
                 ...userData,
-                payload: token
+                token: token
             }
         ); // in Express there should be only ONE answer ALWAYS;
     }
