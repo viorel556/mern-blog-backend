@@ -11,10 +11,16 @@ import {UserController, PostController} from './controllers/index.js'
 import multer from 'multer';
 import handleValidationErrors from "./utils/handleValidationErrors.js";
 
+const dbname = "blog";
+const user = 'viorel556';
+const password = 'standart1';
+const cluster = 'cluster0';
+const finalUrl = `mongodb+srv://${user}:${password}@${cluster}.xx2rtno.mongodb.net/${dbname}?retryWrites=true&w=majority`
+
  // DATABASE SETUP:
 // Connecting to MongoDB by using Mongoose:
 mongoose
-    .connect(process.env.MONGODB_URI) // IMPORTANT: HEROKU deploys our user credentials for access;
+    .connect(finalUrl) // IMPORTANT: HEROKU deploys our user credentials for access;
     .then(() => console.log('DB is OK! '))
     .catch((err) => console.log('DB ERROR: ', err))
 
